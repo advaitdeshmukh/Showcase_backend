@@ -76,14 +76,14 @@ def user_endpoint2(item:MOM_Testing):
         next_text = []
         for string in text:
             next_text.append(string.replace('\n',''))
-        final_text_2 = []
-        for i in range(len(next_text)):
-            try:
-                final_text_2.append(next_text[i] + " " + next_text[i+1])       
-            except:
-                pass
-        final_text_2
-        result = final_text_2[0::2]
+        # final_text_2 = []
+        # for i in range(len(next_text)):
+        #     try:
+        #         final_text_2.append(next_text[i] + " " + next_text[i+1])       
+        #     except:
+        #         pass
+        # final_text_2
+        result = next_text
 	
         preprocess = []
         for q in result:
