@@ -76,14 +76,14 @@ def user_endpoint2(item:MOM_Testing):
         next_text = []
         for string in text:
             next_text.append(string.replace('\n',''))
-        # final_text_2 = []
-        # for i in range(len(next_text)):
-        #     try:
-        #         final_text_2.append(next_text[i] + " " + next_text[i+1])       
-        #     except:
-        #         pass
-        # final_text_2
-        result = next_text
+        final_text_2 = []
+        for i in range(len(next_text)):
+            try:
+                final_text_2.append(next_text[i] + " " + next_text[i+1])       
+            except:
+                pass
+        final_text_2
+        result = final_text_2[0::2]
 	
         preprocess = []
         for q in result:
@@ -112,20 +112,6 @@ def user_endpoint2(item:MOM_Testing):
 class Tweet_Testing(BaseModel):
     prompt: str
 
-def get_response_tweet(new_prompt):
-    response = openai.Completion.create(
-    engine="davinci-codex",
-    prompt=new_prompt,
-    temperature=0.3,
-    max_tokens=2,
-    top_p=1.0,
-    frequency_penalty=0.5,
-    presence_penalty=0.0,
-    stop=["###"]
-    )
-    return response
-
-    #"This is a tweet sentiment classifier\n\n\nTweet: \"I loved the new Batman movie!\"\nSentiment: Positive\n###\nTweet: \"I hate it when my phone battery dies.\"\nSentiment: Negative\n###\nTweet: \"My day has been 👍\"\nSentiment: Positive\n###\nTweet: \"This is the link to the article\"\nSentiment: Neutral\n###\nTweet: \"This new music video blew my mind\"\nSentiment:"
 
 @app.post("/ask_tweet_gpt")
 def user_endpoint3(item:Tweet_Testing):
@@ -145,4 +131,41 @@ def user_endpoint3(item:Tweet_Testing):
         
         # print(response)
         result = gpt_sql.get_top_reply(item.prompt)
+        return result
+
+class Python_Code(BaseModel):
+    code: str
+
+@app.post("/fix_python_code")
+def user_endpoint4(item:Python_Code):
+        prefix="##### Fix bugs in the below function\n \n### Buggy Python\n"
+        suffix="\n### Fixed Python"
+        gpt_sql = sql_GPT(engine="davinci-codex",
+            input_prefix=prefix,
+            input_suffix=suffix,
+            temperature=0,
+            max_tokens=182,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
+            stop=["###"]
+            )
+        result = gpt_sql.get_top_reply(item.code)
+        return result
+
+@app.post("/explain_python_code")
+def user_endpoint4(item:Python_Code):
+        prefix="# Python 3 \n"
+        suffix="\n\n# Explanation of what the code does\n\n#"
+        gpt_sql = sql_GPT(engine="davinci-codex",
+            input_prefix=prefix,
+            input_suffix=suffix,
+            temperature=0,
+            max_tokens=64,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0,
+            stop=["#"]
+            )
+        result = gpt_sql.get_top_reply(item.code)
         return result
