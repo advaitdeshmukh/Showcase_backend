@@ -45,7 +45,7 @@ def user_endpoint1(item:SQL_Testing):
 
 def window(text_list, window_size):
     final_list = []
-    for i in range(len(text_list)):
+    for i in range(len(text_list)-window_size+1):
         try:
             interim = text_list[i:i+window_size]
             final_list.append(interim)
@@ -64,27 +64,48 @@ def get_response_MOM(new_prompt):
     top_p=1)
     return response
 
+def isBlank (myString):
+    if myString and myString.strip():
+        #myString is not None AND myString is not empty or blank
+        return False
+    #myString is None OR myString is empty or blank
+    return True
+
 class MOM_Testing(BaseModel):
     windowSize: int
     l_text: list
 
 @app.post("/ask_mom_gpt")
 def user_endpoint2(item:MOM_Testing):
+        print(item.l_text)
+       
         text = list(filter(('\n').__ne__, item.l_text))
         text = list(filter(('  \n').__ne__, text))
         text = text[1:]
+        print("text:")
+        print(text)
         next_text = []
         for string in text:
             next_text.append(string.replace('\n',''))
+        print("next text:")
+        print(next_text)
+
+        next_text_1=[]
+        for string in next_text:
+            if not isBlank(string):
+                next_text_1.append(string)
+
         final_text_2 = []
-        for i in range(len(next_text)):
+        for i in range(len(next_text_1)):
             try:
-                final_text_2.append(next_text[i] + " " + next_text[i+1])       
+                final_text_2.append(next_text_1[i] + " " + next_text_1[i+1])       
             except:
                 pass
         final_text_2
         result = final_text_2[0::2]
-	
+        print("result:")
+        print(result)
+
         preprocess = []
         for q in result:
             preprocess.append(re.split(' pm - | am - ',q)[1])
@@ -168,4 +189,30 @@ def user_endpoint4(item:Python_Code):
             stop=["#"]
             )
         result = gpt_sql.get_top_reply(item.code)
+        return result
+
+class Completion_prompt(BaseModel):
+    prompt: str
+    engine:str
+    temperature:float
+    response_length:int
+    top_p:float
+    frequency_penalty:float
+    presence_penalty:float
+
+@app.post("/gpt_complete")
+def user_endpoint4(item:Completion_prompt):
+        prefix=""
+        suffix=""
+        gpt_sql = sql_GPT(engine=item.engine,
+            input_prefix=prefix,
+            input_suffix=suffix,
+            temperature=item.temperature,
+            max_tokens=item.response_length,
+            top_p=item.top_p,
+            frequency_penalty=item.frequency_penalty,
+            presence_penalty=item.presence_penalty,
+            stop=["#","###"]
+            )
+        result = gpt_sql.get_top_reply(item.prompt)
         return result
