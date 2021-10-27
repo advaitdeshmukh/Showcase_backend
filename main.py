@@ -37,7 +37,7 @@ def user_endpoint1(item:SQL_Testing):
             input_prefix=prefix,
             input_suffix="\nSELECT",
             temperature=0,
-            max_tokens=150,
+            max_tokens=300,
             stop=["#", ";"])
 
     result = gpt_sql.get_top_reply(item.prompt)
