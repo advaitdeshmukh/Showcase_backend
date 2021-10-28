@@ -176,8 +176,8 @@ def user_endpoint4(item:Python_Code):
 
 @app.post("/explain_python_code")
 def user_endpoint4(item:Python_Code):
-        prefix="# Python 3 \n"
-        suffix="\n\n# Explanation of what the code does\n\n#"
+        prefix=""
+        suffix="\n\n\"\"\"\nHere's what the above class is doing:\n1."
         gpt_sql = sql_GPT(engine="davinci-codex",
             input_prefix=prefix,
             input_suffix=suffix,
@@ -186,7 +186,7 @@ def user_endpoint4(item:Python_Code):
             top_p=1.0,
             frequency_penalty=0.0,
             presence_penalty=0.0,
-            stop=["#"]
+            stop=["\"\"\""]
             )
         result = gpt_sql.get_top_reply(item.code)
         return result
