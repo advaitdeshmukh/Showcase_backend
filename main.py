@@ -7,13 +7,17 @@ from sql_gpt import sql_GPT
 import re
 # server_url = "http://127.0.0.1:8000"
 
-with open('config.json') as f:
-    data = json.load(f)
-openai.api_key = data['API_KEY']
+# with open('config.json') as f:
+#     data = json.load(f)
+# openai.api_key = data['API_KEY']
 
 # with open('schema.json') as f:
 #     schema = json.load(f)
     
+import os
+
+api_key = os.getenv("API_KEY", "optional-default")
+
 app = FastAPI(title="GPT-3 Applications",
     description="API Docs",
     version="1.0.0",)
