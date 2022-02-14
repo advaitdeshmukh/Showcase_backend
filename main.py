@@ -16,7 +16,7 @@ import re
     
 import os
 
-api_key = os.getenv("API_KEY", "optional-default")
+openai.api_key = os.getenv("API_KEY", "optional-default")
 
 app = FastAPI(title="GPT-3 Applications",
     description="API Docs",
